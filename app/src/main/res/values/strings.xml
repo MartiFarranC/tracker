@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tracker</string>
+    <!-- La placa que diferencia les apps de la casa dels jocs. -->
+    <string name="marca_app">APP</string>
+
+    <!-- General -->
+    <string name="accepta">D\'acord</string>
+    <string name="cancela">Cancel·la</string>
+    <string name="desa">Desa</string>
+    <string name="edita">Edita</string>
+    <string name="esborra">Esborra</string>
+    <string name="enrere">Enrere</string>
+    <string name="fet">Fet!</string>
+
+    <!-- Inici -->
+    <string name="nou_seguiment">Nou seguiment</string>
+    <string name="seccio_toca">Toca ara</string>
+    <string name="seccio_aviat">Aviat</string>
+    <string name="seccio_be">Tot en ordre</string>
+    <string name="buit_titol">Res a vigilar, de moment.</string>
+    <string name="buit_text">Afegeix les pastilles, el cabell, la gasolina…</string>
+    <string name="xifra_dies_estoc">dies</string>
+    <string name="xifra_falten">falten</string>
+    <string name="xifra_tard">de retard</string>
+    <string name="xifra_fa">dies</string>
+    <string name="linia_queden">Queden %1$s</string>
+    <string name="linia_darrer">Darrer: %1$s · cada %2$s</string>
+    <string name="linia_un_registre">Registra\'l un altre cop i calcularé cada quan toca.</string>
+    <string name="linia_sense_registres">Encara no hi ha cap registre.</string>
+
+    <!-- Plantilles -->
+    <string name="tria_plantilla">Tria per on començar. Després ho pots canviar tot.</string>
+    <string name="plantilla_medicament">Medicament</string>
+    <string name="plantilla_medicament_desc">Pastilles que es gasten cada dia. T\'avisa abans que s\'acabin.</string>
+    <string name="plantilla_consumible">Consumible</string>
+    <string name="plantilla_consumible_desc">Lentilles, càpsules, filtres… Qualsevol cosa que es gasta sola.</string>
+    <string name="plantilla_cabell">Tallar-se el cabell</string>
+    <string name="plantilla_cabell_desc">Apunta cada cop. En farà la mitjana i t\'avisarà quan toqui.</string>
+    <string name="plantilla_gasolina">Gasolina</string>
+    <string name="plantilla_gasolina_desc">Cada cop que poses benzina, amb els euros o els litres.</string>
+    <string name="plantilla_revisio">Revisió del vehicle</string>
+    <string name="plantilla_revisio_desc">Cada any (o cada quan vulguis), amb un avís un mes abans.</string>
+    <string name="plantilla_metge">Visita mèdica</string>
+    <string name="plantilla_metge_desc">Revisions periòdiques: el dentista, l\'oculista, l\'anàlisi…</string>
+    <string name="plantilla_personalitzat">Personalitzat</string>
+    <string name="plantilla_personalitzat_desc">Des de zero: tria si té estoc, registres o totes dues coses.</string>
+    <string name="unitat_pastilla">pastilla</string>
+    <string name="paquet_caixa">caixa</string>
+    <string name="unitat_unitat">unitat</string>
+    <string name="paquet_paquet">paquet</string>
+    <string name="nom_cabell">Tallar-me el cabell</string>
+    <string name="nom_gasolina">Gasolina</string>
+    <string name="nom_revisio">Revisió del cotxe</string>
+    <string name="nom_metge">Visita mèdica</string>
+
+    <!-- Formulari -->
+    <string name="camp_nom">Nom</string>
+    <string name="camp_detall">Detall</string>
+    <string name="camp_detall_ajuda">La marca, el vehicle, el metge… (opcional)</string>
+    <string name="amb_estoc">Té un estoc que es gasta sol</string>
+    <string name="amb_estoc_desc">Cada dia et resta el que gastes i t\'avisa abans que s\'acabi.</string>
+    <string name="camp_unitat">Unitat</string>
+    <string name="camp_paquet">Paquet (opcional)</string>
+    <string name="camp_per_paquet">%1$s per %2$s</string>
+    <string name="camp_quantitat">%1$s cada cop</string>
+    <string name="camp_cada_dies">Cada quants dies</string>
+    <string name="que_tens_ara">Què tens ara</string>
+    <string name="camp_soltes">%1$s soltes</string>
+    <string name="avui_ja_gastat">Avui ja l\'has gastat</string>
+    <string name="avui_ja_gastat_desc">Si no, també et restaré el d\'avui.</string>
+    <string name="camp_avis_estoc">Avisa\'m quan quedin aquests dies</string>
+    <string name="amb_registres">Registra cada cop que ho fas</string>
+    <string name="amb_registres_desc">Compta els dies, en fa la mitjana i t\'avisa quan toca.</string>
+    <string name="interval_fix">Cada quan toca és fix</string>
+    <string name="interval_fix_desc">Si no, faré servir la mitjana dels teus registres.</string>
+    <string name="camp_interval">Cada quants dies toca</string>
+    <string name="camp_avis_abans">Avisa\'m aquests dies abans</string>
+    <string name="amb_valor">Cada cop porta una xifra</string>
+    <string name="amb_valor_desc">Euros, litres, quilòmetres…</string>
+    <string name="camp_unitat_valor">Unitat de la xifra (€, L, km…)</string>
+    <string name="darrer_cop">Quan va ser l\'últim cop? (opcional)</string>
+    <string name="darrer_cop_triat">Últim cop: %1$s</string>
+    <string name="error_nom">Posa-li un nom.</string>
+    <string name="error_cap">Tria si té estoc, registres o totes dues coses.</string>
+    <string name="error_unitat">Digues com es diu una unitat (per exemple, «pastilla»).</string>
+    <string name="error_consum">Revisa quant se\'n gasta i cada quants dies.</string>
+    <string name="error_interval">Cada quants dies toca ha de ser 1 o més.</string>
+
+    <!-- Detall: estoc -->
+    <string name="et_queden">Et queden</string>
+    <string name="estoc_i">%1$s i %2$s</string>
+    <string name="estoc_per_a">Tens per a %1$s, fins al %2$s.</string>
+    <string name="estoc_avui_ultim">Avui ha estat l\'últim. Demana\'n més!</string>
+    <string name="estoc_acabat">S\'ha acabat. Demana\'n més!</string>
+    <string name="estoc_no_es_gasta">No es gasta sol.</string>
+    <string name="consum">%1$s %2$s %3$s</string>
+    <string name="cada_dia">cada dia</string>
+    <string name="menys_u">−1</string>
+    <string name="mes_u">+1</string>
+    <string name="ajust_ajuda">−1 si un dia n\'has gastat de més; +1 si un dia no n\'has gastat.</string>
+    <string name="he_comprat">He comprat</string>
+    <string name="he_comprat_text">Quant n\'has comprat? Se suma al que tens.</string>
+    <string name="corregeix">Corregeix</string>
+    <string name="corregeix_text">Quant en tens exactament ara?</string>
+
+    <!-- Detall: registres -->
+    <string name="darrer_cop_etiqueta">L\'últim cop</string>
+    <string name="mai">Mai</string>
+    <string name="proper_cop">Toca el %1$s (%2$s).</string>
+    <string name="interval_fix_text">Cada %1$s.</string>
+    <string name="interval_mitjana_text">De mitjana, cada %1$s dies (%2$s).</string>
+    <string name="valors_text">Mitjana: %1$s %2$s · Total: %3$s %4$s</string>
+    <string name="ho_he_fet_avui">Ho he fet avui</string>
+    <string name="un_altre_dia">Un altre dia…</string>
+    <string name="historial">Historial</string>
+    <string name="des_de_l_anterior">+%1$d dies</string>
+    <string name="esborra_registre">Esborrar aquest registre?</string>
+    <string name="camp_valor">Xifra (%1$s)</string>
+    <string name="camp_nota">Nota (opcional)</string>
+    <string name="esborrar_titol">Esborrar «%1$s»?</string>
+    <string name="esborrar_text">S\'esborrarà amb tot l\'historial. No es pot desfer.</string>
+
+    <!-- Textos de dies -->
+    <string name="falten_avui">Avui</string>
+    <string name="falten_dema">Demà</string>
+    <string name="fa_avui">Avui</string>
+    <string name="fa_ahir">Ahir</string>
+    <plurals name="falten_dies">
+        <item quantity="one">D\'aquí a %d dia</item>
+        <item quantity="other">D\'aquí a %d dies</item>
+    </plurals>
+    <plurals name="tocava_fa">
+        <item quantity="one">Tocava fa %d dia</item>
+        <item quantity="other">Tocava fa %d dies</item>
+    </plurals>
+    <plurals name="fa_dies">
+        <item quantity="one">Fa %d dia</item>
+        <item quantity="other">Fa %d dies</item>
+    </plurals>
+    <plurals name="dies">
+        <item quantity="one">%d dia</item>
+        <item quantity="other">%d dies</item>
+    </plurals>
+    <plurals name="cada_dies">
+        <item quantity="one">cada %d dia</item>
+        <item quantity="other">cada %d dies</item>
+    </plurals>
+    <plurals name="registres">
+        <item quantity="one">%d registre</item>
+        <item quantity="other">%d registres</item>
+    </plurals>
+
+    <!-- Avisos -->
+    <string name="canal_avisos">Avisos</string>
+    <string name="canal_avisos_desc">Quan s\'acaba un estoc o toca tornar a fer alguna cosa.</string>
+    <plurals name="avis_estoc">
+        <item quantity="one">Només et queda per a %d dia. Demana\'n més.</item>
+        <item quantity="other">Només et queda per a %d dies. Demana\'n més.</item>
+    </plurals>
+    <string name="avis_estoc_acabat">S\'ha acabat. Demana\'n més.</string>
+    <plurals name="avis_registre_falten">
+        <item quantity="one">Toca d\'aquí a %d dia.</item>
+        <item quantity="other">Toca d\'aquí a %d dies.</item>
+    </plurals>
+    <string name="avis_registre_toca">Ja toca: l\'últim cop va ser fa %1$d dies.</string>
+</resources>

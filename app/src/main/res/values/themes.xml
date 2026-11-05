@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Tracker" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/fons</item>
+        <item name="android:windowLightStatusBar">@bool/barra_clara</item>
+    </style>
+</resources>

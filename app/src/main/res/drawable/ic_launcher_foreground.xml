@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- L'ombra dura -->
+    <path android:fillColor="#111111" android:pathData="M38,38h38v38h-38z" />
+    <!-- La fitxa -->
+    <path android:fillColor="#FFFFFF" android:strokeColor="#111111" android:strokeWidth="3" android:pathData="M34,34h38v38h-38z" />
+    <path android:fillColor="#111111" android:pathData="M34,34h38v9h-38z" />
+    <!-- El check -->
+    <path android:strokeColor="#111111" android:strokeWidth="5" android:strokeLineCap="square" android:pathData="M43,57l7,7l13,-14" />
+</vector>
