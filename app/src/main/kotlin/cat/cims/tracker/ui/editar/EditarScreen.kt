@@ -129,7 +129,7 @@ private fun Formulari(s: Seguiment, nou: Boolean, avui: Long, onDesa: (Seguiment
 
     var ambRegistres by rememberSaveable { mutableStateOf(s.ambRegistres) }
     var ambIntervalFix by rememberSaveable { mutableStateOf(s.intervalFixDies != null) }
-    var intervalFix by rememberSaveable { mutableStateOf(s.intervalFixDies?.let(::text) ?: "30") }
+    var intervalFix by rememberSaveable { mutableStateOf(s.intervalFixDies?.toString() ?: "30") }
     var avisAbans by rememberSaveable { mutableStateOf(text(s.avisAbansDies)) }
     var ambValor by rememberSaveable { mutableStateOf(s.ambValor) }
     var unitatValor by rememberSaveable { mutableStateOf(s.unitatValor) }

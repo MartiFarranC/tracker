@@ -71,7 +71,7 @@ object Avisos {
                 val falten = r.resumRegistres?.diesFinsPropera ?: return@forEach
                 when {
                     falten > 0 -> context.resources.getQuantityString(R.plurals.avis_registre_falten, falten.toInt(), falten.toInt())
-                    else -> context.getString(R.string.avis_registre_toca, r.resumRegistres.diesDesDelDarrer ?: 0)
+                    else -> context.getString(R.string.avis_registre_toca, r.resumRegistres?.diesDesDelDarrer ?: 0L)
                 }
             }
             notifica(context, s.id, s.nom, text)

@@ -123,7 +123,7 @@ private fun xifra(r: ResumSeguiment): Xifra {
         reg?.diesFinsPropera != null -> Xifra(
             numero = abs(reg.diesFinsPropera).toString(),
             etiqueta = stringResource(if (reg.diesFinsPropera < 0) R.string.xifra_tard else R.string.xifra_falten),
-            linia = stringResource(R.string.linia_darrer, textFa(reg.diesDesDelDarrer ?: 0), textDies(reg.interval?.toLong() ?: 0)),
+            linia = stringResource(R.string.linia_darrer, textFa(reg.diesDesDelDarrer ?: 0L), textDies(reg.interval?.toLong() ?: 0L)),
         )
         reg?.diesDesDelDarrer != null -> Xifra(
             numero = reg.diesDesDelDarrer.toString(),
