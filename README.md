@@ -10,6 +10,11 @@ Tot és **genèric**: cada seguiment es fa amb dues peces que es poden combinar.
 - **Registres.** Cada cop que fas una cosa, ho apuntes (avui o un altre dia, amb una xifra opcional: euros, litres…).
   L'app compta els dies, en fa la mitjana i avisa quan toca tornar-hi. També pot anar amb un interval fix (cada any).
 
+## Versió web
+
+La web del Tracker és `index.html`, a l'arrel del repositori, i es publica amb GitHub Pages
+(branca `main`, carpeta `/ (root)`). El primer prototip en HTML és a `prototip/index.html`.
+
 ## Instal·lar la versió de prova
 
 Cada canvi a `main` compila l'app a GitHub Actions i publica l'APK a la versió
@@ -32,6 +37,8 @@ app/src/main/kotlin/cat/cims/tracker/
   domini/     les regles (estoc, mitjanes, quan toca), en Kotlin pur i amb tests
   avisos/     la revisió diària amb WorkManager i les notificacions
   ui/         pantalles en Compose i el tema de la casa
+index.html        la versió web (GitHub Pages)
+prototip/         el primer prototip en HTML
 docs/disseny.md   l'estètica (com els jocs de la casa, però d'app)
 ```
 

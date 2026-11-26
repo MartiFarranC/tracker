@@ -1,0 +1,763 @@
+<title>Tracker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500..900&family=Caveat:wght@600&family=Instrument+Sans:wght@400..700&display=swap">
+<style>
+/* Disposició: web d'escriptori a l'estil de la web de municipis (barra flotant de vidre, portada amb brillantor,
+   targetes arrodonides en graella), amb la paleta pròpia del Tracker: blanc i negre amb el verd menta de les apps. */
+:root {
+  --fons: #FFFFFF; --sup: #F5F5F5; --sup2: #ECECEC; --linia: #E4E4E4;
+  --text: #111111; --cos-text: #2B2B2B; --suau: #6B6B6B; --error: #C62D1F;
+  --fort: #3DDC97; --fort-f: #22B97A; --fort-suau: #D4F6E7; --accent: #0B7A4B; --tinta: #111111;
+  --vidre: rgba(255, 255, 255, .66); --vora-vidre: rgba(17, 17, 17, .08);
+  --degradat: linear-gradient(120deg, #8CEFC2, #3DDC97 45%, #26C783);
+  --degradat-text: linear-gradient(120deg, #0E8A57, #0A6040);
+  --ombra: 0 10px 30px rgba(17, 17, 17, .10); --brillantor: rgba(61, 220, 151, .20);
+  --display: "Archivo", "Arial Black", system-ui, sans-serif;
+  --cos: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ma: "Caveat", "Segoe Print", cursive;
+  --corba: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --fons: #0F0F0F; --sup: #1A1A1A; --sup2: #242424; --linia: #2A2A2A;
+  --text: #F2F2F2; --cos-text: #CFCFCF; --suau: #9A9A9A; --error: #F08A7A;
+  --fort-suau: #193A2C; --accent: #3DDC97;
+  --vidre: rgba(26, 26, 26, .62); --vora-vidre: rgba(255, 255, 255, .08);
+  --degradat-text: linear-gradient(120deg, #A6F3CF, #3DDC97 50%, #2BC585);
+  --ombra: 0 10px 30px rgba(0, 0, 0, .4); --brillantor: rgba(61, 220, 151, .13); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --fons: #0F0F0F; --sup: #1A1A1A; --sup2: #242424; --linia: #2A2A2A;
+  --text: #F2F2F2; --cos-text: #CFCFCF; --suau: #9A9A9A; --error: #F08A7A;
+  --fort-suau: #193A2C; --accent: #3DDC97;
+  --vidre: rgba(26, 26, 26, .62); --vora-vidre: rgba(255, 255, 255, .08);
+  --degradat-text: linear-gradient(120deg, #A6F3CF, #3DDC97 50%, #2BC585);
+  --ombra: 0 10px 30px rgba(0, 0, 0, .4); --brillantor: rgba(61, 220, 151, .13); color-scheme: dark }
+
+* { box-sizing: border-box }
+html { scroll-behavior: smooth }
+body { margin: 0; background: var(--fons); color: var(--text); font: 17px/1.55 var(--cos); transition: background-color .3s, color .3s;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+body { position: relative }
+.halo { position: absolute; top: 0; left: 0; right: 0; height: 720px; z-index: -1; pointer-events: none; background: radial-gradient(900px 520px at 82% 0, var(--brillantor), transparent 70%) }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--fons) }
+a { color: var(--accent) }
+:focus-visible { outline: 3px solid var(--fort); outline-offset: 3px; border-radius: 6px }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance }
+h1 { font-weight: 800; font-size: clamp(34px, 5.6vw, 54px); line-height: 1.05; letter-spacing: -.01em }
+h2 { font-weight: 800; font-size: 28px; line-height: 1.15 }
+h3 { font-weight: 700; font-size: 19px; line-height: 1.25 }
+p { margin: 0; color: var(--cos-text); max-width: 68ch; text-wrap: pretty }
+.eti { font: 700 13px var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--accent) }
+.eti.suau { color: var(--suau) }
+.ma { font: 600 1.35em/1 var(--ma); color: var(--accent) }
+.degradat-text { background: var(--degradat-text); -webkit-background-clip: text; background-clip: text; color: transparent }
+.destacat { font-size: 20px; color: var(--text) }
+.petit { font-size: 14px; color: var(--suau) }
+.creix { flex: 1; min-width: 0 }
+
+/* Barra: píndola flotant de vidre */
+.barra { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  max-width: 1080px; margin: 12px auto 0; padding: 8px 8px 8px 20px; border-radius: 999px;
+  background: var(--vidre); border: 1px solid var(--vora-vidre); box-shadow: var(--ombra);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6) }
+.marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; white-space: nowrap }
+.marca b { font: 800 15px var(--display); letter-spacing: .12em; text-transform: uppercase; background: var(--degradat-text); -webkit-background-clip: text; background-clip: text; color: transparent }
+.marca svg { width: 26px; height: 26px; flex: none }
+.barra nav { display: flex; gap: 4px }
+.llarg { margin-left: .3em }
+.barra nav a { position: relative; display: inline-flex; align-items: center; min-height: 48px; padding: 0 14px; color: var(--suau); text-decoration: none; font-weight: 600; border-radius: 999px; white-space: nowrap }
+.barra nav a:hover, .barra nav a[aria-current="page"] { color: var(--text) }
+.barra nav a::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 10px; height: 2px; border-radius: 2px; background: var(--degradat);
+  transform: scaleX(0); transform-origin: left; transition: transform .35s var(--corba) }
+.barra nav a:hover::after, .barra nav a[aria-current="page"]::after { transform: scaleX(1) }
+.accions-barra { display: flex; align-items: center; gap: 4px }
+.icona { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 0; background: none; color: var(--text); cursor: pointer; flex: none }
+.icona:hover { background: var(--sup2) }
+.icona svg { width: 22px; height: 22px }
+.desplegable { position: relative }
+.desplegable ul { position: absolute; right: 0; top: calc(100% + 8px); min-width: 180px; list-style: none; margin: 0; padding: 6px;
+  border-radius: 16px; background: var(--sup); border: 1px solid var(--linia); box-shadow: var(--ombra);
+  opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .2s, transform .25s var(--corba), visibility 0s .25s }
+.desplegable.obert ul { opacity: 1; visibility: visible; transform: none; transition: opacity .2s, transform .25s var(--corba) }
+.desplegable [role="menuitemradio"] { width: 100%; min-height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: none; color: var(--text); font: 600 15px var(--cos); text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center }
+.desplegable [role="menuitemradio"]:hover { background: var(--sup2) }
+.desplegable [aria-checked="true"]::after { content: "●"; color: var(--fort); font-size: 10px }
+@media (max-width: 640px) {
+  .barra { padding-left: 14px; gap: 4px }
+  .barra nav a { padding: 0 10px; font-size: 15px }
+  .barra nav a::after { left: 10px; right: 10px }
+  .llarg { display: none }
+  .xifres { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px }
+  .xifra-r { padding: 12px; font-size: 15px }
+  .xifra-r b { font-size: 28px }
+  .marca b { display: none }
+}
+
+/* Contingut */
+main { max-width: 1080px; margin: 0 auto; padding-block: 0 72px; position: relative }
+.entra { animation: entra .5s var(--corba) both }
+@keyframes entra { from { opacity: .001; transform: translateY(14px) } to { opacity: 1; transform: none } }
+.portada { padding: 64px 0 28px; position: relative; display: flex; flex-direction: column; gap: 14px }
+.portada .accions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px }
+.seccio { display: flex; flex-direction: column; gap: 14px; margin-top: 44px }
+.seccio-cap { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap }
+.compte { font: 700 15px var(--cos); color: var(--suau) }
+
+/* Botons: degradat menta com a la web de municipis */
+.boto { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 12px; border: 0;
+  background: var(--degradat); color: var(--tinta); font: 700 16px var(--display); text-decoration: none; cursor: pointer;
+  transition: transform .2s var(--corba), box-shadow .2s, background-color .2s, border-color .2s }
+.boto:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(61, 220, 151, .32) }
+.boto:active, .icona:active, .xip:active { transform: scale(.97) }
+.boto.secundari { background: var(--fons); color: var(--text); border: 1px solid var(--linia); font-family: var(--cos); font-weight: 600 }
+.boto.secundari:hover { border-color: var(--fort-f); box-shadow: none }
+.boto.perill { color: var(--error) }
+.boto.perill:hover { border-color: var(--error) }
+.boto.gran { min-height: 56px; font-size: 17px }
+.boto.ample { width: 100% }
+.boto .fletxa { transition: transform .25s var(--corba) }
+.boto:hover .fletxa { transform: translateX(4px) }
+.contesta { display: inline-block; animation: puja 240ms ease-out }
+@keyframes puja { from { transform: translateY(70%); opacity: 0 } to { transform: none; opacity: 1 } }
+.parell { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+
+/* Xifres de resum */
+.xifres { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 18px }
+.xifra-r { background: var(--sup); border: 1px solid var(--linia); border-radius: 14px; padding: 14px 16px; color: var(--cos-text); display: flex; flex-direction: column; gap: 2px }
+.xifra-r b { font: 800 34px/1.1 var(--display); font-variant-numeric: tabular-nums; color: var(--text) }
+.xifra-r.toca b { background: var(--degradat-text); -webkit-background-clip: text; background-clip: text; color: transparent }
+
+/* Avisos */
+.avisos { border: 1px solid var(--fort-f); background: var(--brillantor); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px }
+.avis { display: flex; gap: 12px; align-items: baseline; color: var(--text) }
+.avis::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--fort); box-shadow: 0 0 0 3px var(--brillantor); flex: none; transform: translateY(-2px) }
+
+/* Targetes dels seguiments */
+.graella { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px }
+.seg { display: flex; gap: 16px; align-items: center; padding: 16px; border-radius: 16px; background: var(--sup); border: 1px solid var(--linia); color: inherit; text-decoration: none; min-width: 0 }
+.seg.toca { background: var(--fons); border-color: var(--fort-f); box-shadow: 0 0 0 1px var(--fort-f) inset }
+.seg .graf { width: 84px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font: 700 11px var(--cos); letter-spacing: .1em; text-transform: uppercase; color: var(--suau); text-align: center }
+.seg h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.seg .linia { font-size: 15px; color: var(--cos-text); margin-top: 4px }
+.seg .det { font-size: 14px; color: var(--suau); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.insignia { display: inline-block; padding: 3px 14px 3px 10px; font: 700 11px var(--display); letter-spacing: .08em; text-transform: uppercase; background: var(--degradat); color: var(--tinta);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 50%, 100% 100%, 0 100%); margin-bottom: 6px }
+.insignia.aviat { background: var(--fort-suau); color: var(--text) }
+.brilla { position: relative; isolation: isolate; transition: transform .25s var(--corba), box-shadow .25s, border-color .25s }
+.brilla::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1; opacity: 0; transition: opacity .3s;
+  background: radial-gradient(220px circle at var(--x, 50%) var(--y, 50%), var(--brillantor), transparent 70%) }
+.brilla:hover { transform: translateY(-3px); box-shadow: var(--ombra); border-color: var(--fort-f) }
+.brilla:hover::after { opacity: 1 }
+.buit { text-align: center; padding: 48px 16px; border: 1px dashed var(--linia); border-radius: 16px; display: flex; flex-direction: column; gap: 6px; align-items: center }
+.buit .ma { font-size: 34px }
+
+/* Gràfics */
+.grafic { position: relative; display: grid; place-items: center }
+.grafic svg { display: block; max-width: 100% }
+.grafic > b { position: absolute; inset: 0; display: grid; place-items: center; font: 800 21px/1 var(--display); font-variant-numeric: tabular-nums; color: var(--text) }
+.grafic.gran > b { font-size: 44px }
+.grafic.gran small { display: block; font: 700 11px var(--cos); letter-spacing: .08em; text-transform: uppercase; margin-top: 6px; color: var(--suau) }
+.caixes { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end }
+.caixes .mes { font: 800 22px var(--display) }
+.blister { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--linia); border-radius: 12px; background: var(--fons); width: max-content; max-width: 100% }
+.blister i { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--linia); display: block }
+.blister i.ple { background: var(--fort); border-color: var(--fort-f) }
+.calendari { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 460px }
+.calendari div { aspect-ratio: 1; display: grid; place-items: center; font-size: 13px; font-weight: 600; border: 1.5px solid transparent; border-radius: 8px; font-variant-numeric: tabular-nums; max-width: 100% }
+.calendari .cap { aspect-ratio: auto; font-size: 11px; color: var(--suau); font-weight: 700; text-transform: uppercase; letter-spacing: .06em }
+.calendari .passat { color: var(--suau); opacity: .45 }
+.calendari .te { background: var(--sup2) }
+.calendari .avisa { background: var(--fort); color: var(--tinta) }
+.calendari .sense { border: 1.5px dashed var(--suau); color: var(--suau) }
+.calendari .avui { border: 2px solid var(--text) }
+.llegenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--suau) }
+.llegenda span { display: inline-flex; align-items: center; gap: 6px }
+.llegenda i { width: 13px; height: 13px; display: inline-block; border: 1.5px solid transparent; border-radius: 4px }
+.barres { display: flex; align-items: flex-end; gap: 8px; height: 150px; position: relative; border-bottom: 1px solid var(--linia); padding-top: 22px }
+.barres > div { flex: 1; display: flex; justify-content: center; align-items: flex-end; height: 100%; min-width: 0 }
+.barres i { display: block; width: 100%; max-width: 40px; background: color-mix(in srgb, var(--text) 16%, transparent); border-radius: 6px 6px 0 0 }
+.barres .ultima i { background: var(--degradat) }
+.barres .mitjana { position: absolute; left: 0; right: 0; border-top: 1.5px dashed var(--suau); height: 0; pointer-events: none }
+.barres .mitjana span { position: absolute; right: 0; top: -20px; font-size: 12px; font-weight: 700; color: var(--suau); background: var(--sup); padding: 0 6px; border-radius: 4px }
+.eixos { display: flex; gap: 8px; font-size: 11px; color: var(--suau); margin-top: 6px }
+.eixos span { flex: 1; text-align: center; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis }
+.eixos b { display: block; font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums }
+
+/* Detall */
+.torna { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; color: var(--suau); text-decoration: none; font-weight: 600; margin-top: 24px }
+.torna:hover { color: var(--text) }
+.det-cap { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; padding: 8px 0 8px; position: relative }
+.det-cap > div:first-child { display: flex; flex-direction: column; gap: 8px; min-width: 0 }
+.det-acc { display: flex; gap: 8px }
+.bloc-det { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 18px; margin-top: 28px; align-items: start }
+.columna { display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.panell { background: var(--sup); border: 1px solid var(--linia); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+.resum { display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 20px; background: var(--sup); border: 1px solid var(--linia) }
+.resum.toca { background: var(--degradat); border-color: transparent; color: var(--tinta) }
+.resum.toca p, .resum.toca .petit, .resum.toca .eti { color: var(--tinta) }
+.resum .fila { display: flex; gap: 20px; align-items: center }
+.resum h2 { font-size: 26px }
+.historial { display: flex; flex-direction: column }
+.historial > div { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--linia) }
+.historial > div:last-child { border-bottom: 0 }
+.historial .data { font-weight: 700; font-variant-numeric: tabular-nums }
+.esborra-reg { width: 40px; height: 40px; border-radius: 50%; border: 0; background: none; color: var(--suau); font-size: 20px; cursor: pointer; flex: none }
+.esborra-reg:hover { background: var(--sup2); color: var(--error) }
+@media (max-width: 860px) { .bloc-det { grid-template-columns: 1fr } }
+@media (max-width: 480px) { .resum .fila { flex-direction: column; align-items: flex-start } }
+
+/* Plantilles */
+.plantilles { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-top: 8px }
+.plantilla { display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 16px; background: var(--sup); border: 1px solid var(--linia); color: inherit; text-decoration: none }
+.plantilla p { font-size: 15px }
+.plantilla .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--fons); border: 1px solid var(--linia); color: var(--accent) }
+.plantilla .ico svg { width: 24px; height: 24px }
+.plantilla.lliure { border-style: dashed }
+
+/* Formulari */
+.formulari { max-width: 760px; display: flex; flex-direction: column; gap: 16px; margin-top: 24px }
+.formulari fieldset { margin: 0; background: var(--sup); border: 1px solid var(--linia); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0 }
+.fila-camps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px }
+label.camp { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; min-width: 0 }
+label.camp small { font-weight: 400; color: var(--suau); font-size: 14px }
+label.camp input { width: 100%; min-height: 48px; background: var(--fons); color: var(--text); border: 1px solid var(--linia); border-radius: 10px; padding: 10px 12px; font: 16px var(--cos) }
+label.camp input:focus { outline: 2px solid var(--fort); outline-offset: 0; border-color: transparent }
+.interruptor { display: flex; gap: 14px; align-items: center; cursor: pointer }
+.interruptor b { display: block; font-size: 17px }
+.interruptor input { appearance: none; width: 50px; height: 30px; border-radius: 999px; border: 0; background: var(--sup2); box-shadow: inset 0 0 0 1px var(--linia); position: relative; flex: none; cursor: pointer; margin: 0; transition: background .2s }
+.interruptor input::after { content: ""; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--fons); box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: left .2s var(--corba) }
+.interruptor input:checked { background: var(--fort); box-shadow: none }
+.interruptor input:checked::after { left: 24px; background: #FFFFFF }
+.interruptor input:focus-visible { outline: 3px solid var(--fort); outline-offset: 2px }
+.subgrup { display: flex; flex-direction: column; gap: 14px; padding-top: 14px; border-top: 1px solid var(--linia) }
+.error { color: var(--error); font-weight: 600 }
+.peu-form { display: flex; gap: 10px; flex-wrap: wrap }
+
+/* Simulador (només al prototip) */
+.simulador { border: 1px dashed var(--fort-f); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--fons) }
+.simulador .botons { display: flex; flex-wrap: wrap; gap: 8px }
+
+/* Diàlegs centrats */
+.vel { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: rgba(0, 0, 0, .42);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: apareix .2s ease-out;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)) }
+.dialeg { background: var(--sup); border: 1px solid var(--linia); border-radius: 20px; box-shadow: var(--ombra); padding: 24px; width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 14px; animation: entra .3s var(--corba) }
+.dialeg h2 { font-size: 24px }
+.dialeg .botons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; flex-wrap: wrap }
+@keyframes apareix { from { opacity: 0 } }
+
+footer { border-top: 1px solid var(--linia); padding: 24px 0; color: var(--suau); font-size: 14px; text-align: center; max-width: 1080px; margin: 0 auto }
+[hidden] { display: none !important }
+
+@media (max-width: 560px) { .portada { padding-top: 40px } h2 { font-size: 24px } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important }
+  .brilla:hover, .boto:hover { transform: none }
+}
+</style>
+
+<div class="halo" aria-hidden="true"></div>
+<header class="barra">
+  <a class="marca" href="#inici" aria-label="Tracker, inici">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="none" stroke="var(--linia)" stroke-width="4"/><circle cx="16" cy="16" r="12" fill="none" stroke="var(--fort)" stroke-width="4" stroke-linecap="round" stroke-dasharray="52 76" transform="rotate(-90 16 16)"/><circle cx="16" cy="16" r="3.5" fill="var(--text)"/></svg>
+    <b>Tracker</b>
+  </a>
+  <nav aria-label="Seccions">
+    <a href="#inici" data-nav="inici">Seguiments</a>
+    <a href="#nou" data-nav="nou">Nou<span class="llarg"> seguiment</span></a>
+  </nav>
+  <div class="accions-barra">
+    <div class="desplegable" id="tema">
+      <button class="icona" type="button" id="tema-boto" aria-haspopup="true" aria-expanded="false" aria-controls="tema-menu" aria-label="Tema de colors">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor"/></svg>
+      </button>
+      <ul id="tema-menu" role="menu" aria-label="Tema de colors">
+        <li role="none"><button type="button" role="menuitemradio" aria-checked="false" data-tema="auto">Automàtic</button></li>
+        <li role="none"><button type="button" role="menuitemradio" aria-checked="false" data-tema="light">Clar</button></li>
+        <li role="none"><button type="button" role="menuitemradio" aria-checked="false" data-tema="dark">Fosc</button></li>
+      </ul>
+    </div>
+  </div>
+</header>
+<main id="app"></main>
+<footer>Tracker · prototip web. Les dades es guarden només en aquest navegador.</footer>
+<div id="capa-dialeg"></div>
+
+<script>
+"use strict";
+// ---------- Regles (les mateixes que domini/Calculs.kt de l'app) ----------
+const EPS = 1e-9;
+const consumsFins = (dia, inici, cada) => dia < inici ? 0 : Math.floor((dia - inici) / Math.max(1, cada)) + 1;
+function unitatsAvui(s, avui) {
+  const c = Math.max(0, consumsFins(avui, s.consumInici, s.consumCadaDies) - consumsFins(s.estocData, s.consumInici, s.consumCadaDies));
+  return Math.max(0, s.estocUnitats - c * s.consumQuantitat);
+}
+function estoc(s, avui) {
+  const unitats = unitatsAvui(s, avui);
+  if (s.consumQuantitat <= 0) return { unitats, dies: null, finsAl: null, estat: "BE" };
+  const cada = Math.max(1, s.consumCadaDies);
+  const vegades = Math.floor(unitats / s.consumQuantitat + EPS);
+  const fets = consumsFins(avui, s.consumInici, cada);
+  const finsAl = s.consumInici + (fets + vegades) * cada - 1;
+  const dies = finsAl - avui;
+  const estat = dies <= s.avisEstocDies ? "TOCA" : dies <= s.avisEstocDies * 2 ? "AVIAT" : "BE";
+  return { unitats, dies, finsAl, estat };
+}
+function resumRegistres(s, regs, avui) {
+  const dies = regs.map(r => r.data).sort((a, b) => a - b);
+  const ints = []; for (let i = 1; i < dies.length; i++) if (dies[i] - dies[i - 1] > 0) ints.push(dies[i] - dies[i - 1]);
+  const mitjana = ints.length ? ints.reduce((a, b) => a + b, 0) / ints.length : null;
+  const interval = s.intervalFixDies > 0 ? s.intervalFixDies : mitjana != null ? Math.max(1, Math.round(mitjana)) : null;
+  const darrer = dies.length ? dies[dies.length - 1] : null;
+  const propera = darrer != null && interval != null ? darrer + interval : null;
+  const falten = propera != null ? propera - avui : null;
+  const valors = regs.map(r => r.valor).filter(v => v != null);
+  const estat = falten == null ? "SENSE" : falten <= s.avisAbansDies ? "TOCA" : falten <= s.avisAbansDies + Math.max(3, Math.floor(interval / 5)) ? "AVIAT" : "BE";
+  return { nombre: dies.length, darrer, desDe: darrer != null ? avui - darrer : null, mitjana, interval, propera, falten,
+    mitjanaValor: valors.length ? valors.reduce((a, b) => a + b, 0) / valors.length : null,
+    totalValor: valors.length ? valors.reduce((a, b) => a + b, 0) : null, estat };
+}
+const ORDRE = { TOCA: 0, AVIAT: 1, BE: 2, SENSE: 3 };
+function resum(s, avui) {
+  const regs = dades.registres.filter(r => r.seguimentId === s.id).sort((a, b) => b.data - a.data);
+  const e = s.ambEstoc ? estoc(s, avui) : null;
+  const rr = s.ambRegistres ? resumRegistres(s, regs, avui) : null;
+  const estats = [e && e.estat, rr && rr.estat].filter(Boolean);
+  const estat = estats.sort((a, b) => ORDRE[a] - ORDRE[b])[0] || "SENSE";
+  const u = [e && e.dies != null ? e.dies - s.avisEstocDies : null, rr && rr.falten != null ? rr.falten - s.avisAbansDies : null].filter(x => x != null);
+  return { s, regs, e, rr, estat, urgencia: u.length ? Math.min(...u) : Infinity };
+}
+function enPaquets(u, per) { if (per <= 0) return [0, u]; const p = Math.floor(u / per + EPS); return [p, Math.max(0, u - p * per)] }
+function plural(n) {
+  n = (n || "").trim(); const m = n.toLowerCase(); if (!n) return n;
+  if (m.endsWith("ca")) return n.slice(0, -2) + "ques"; if (m.endsWith("ga")) return n.slice(0, -2) + "gues";
+  if (m.endsWith("ça")) return n.slice(0, -2) + "ces"; if (m.endsWith("ja")) return n.slice(0, -2) + "ges";
+  if (m.endsWith("a")) return n.slice(0, -1) + "es"; if (m.endsWith("ió")) return n.slice(0, -2) + "ions";
+  if (m.endsWith("s") || m.endsWith("x")) return n; return n + "s";
+}
+const nom = (sing, q) => Math.abs(q - 1) < EPS ? sing : plural(sing);
+const maj = t => t ? t[0].toUpperCase() + t.slice(1) : t;
+
+// ---------- Format ----------
+const fmtNum = new Intl.NumberFormat("ca", { maximumFractionDigits: 2 });
+const xifra = n => fmtNum.format(n);
+const dataDe = d => new Date(d * 86400000);
+const dataCurta = (d) => dataDe(d).toLocaleDateString("ca", { day: "numeric", month: "short", timeZone: "UTC", ...(dataDe(d).getUTCFullYear() !== dataDe(avui()).getUTCFullYear() ? { year: "numeric" } : {}) });
+const dataLlarga = d => maj(dataDe(d).toLocaleDateString("ca", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }));
+const diesT = n => n === 1 ? "1 dia" : `${n} dies`;
+const faT = n => n === 0 ? "Avui" : n === 1 ? "Ahir" : `Fa ${n} dies`;
+const faltenT = n => n === 0 ? "avui" : n === 1 ? "demà" : n > 1 ? `d'aquí a ${n} dies` : `tocava fa ${diesT(-n)}`;
+function textEstoc(s, u) {
+  const [p, sol] = enPaquets(u, s.nomPaquet ? s.unitatsPerPaquet : 0);
+  const tu = `${xifra(sol)} ${nom(s.nomUnitat, sol)}`;
+  if (!p) return tu; const tp = `${p} ${nom(s.nomPaquet, p)}`;
+  return sol <= 0 ? tp : `${tp} i ${tu}`;
+}
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const num = t => { const v = parseFloat(String(t ?? "").trim().replace(",", ".")); return isNaN(v) ? null : v };
+
+// ---------- Dades (al navegador, com Room al mòbil) ----------
+const CLAU = "tracker-prototip-v1";
+const avuiReal = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000) };
+let dades;
+function exemple() {
+  const a = avuiReal(); let id = 1;
+  const base = { detall: "", creat: a - 70, ambEstoc: false, nomUnitat: "", nomPaquet: "", unitatsPerPaquet: 0, consumQuantitat: 1, consumCadaDies: 1,
+    consumInici: a - 70, estocUnitats: 0, estocData: a, avisEstocDies: 7, ambRegistres: false, intervalFixDies: null, avisAbansDies: 0, ambValor: false, unitatValor: "" };
+  const seg = [
+    { ...base, id: id++, nom: "Eutirox 100", detall: "Merck · 1 al matí", plantilla: "MEDICAMENT", ambEstoc: true, nomUnitat: "pastilla", nomPaquet: "caixa", unitatsPerPaquet: 28, estocUnitats: 37, estocData: a - 1, consumInici: a - 30 },
+    { ...base, id: id++, nom: "Tallar-me el cabell", detall: "Barberia del barri", plantilla: "CABELL", ambRegistres: true },
+    { ...base, id: id++, nom: "Gasolina", detall: "Moto", plantilla: "GASOLINA", ambRegistres: true, ambValor: true, unitatValor: "€" },
+    { ...base, id: id++, nom: "Revisió del cotxe", detall: "Seat Ibiza", plantilla: "REVISIO", ambRegistres: true, intervalFixDies: 365, avisAbansDies: 30 },
+    { ...base, id: id++, nom: "Lentilles", detall: "Mensuals", plantilla: "CONSUMIBLE", ambEstoc: true, nomUnitat: "parell", nomPaquet: "caixa", unitatsPerPaquet: 3, consumCadaDies: 30, estocUnitats: 2, estocData: a, consumInici: a - 5, avisEstocDies: 20 },
+  ];
+  const r = (s, d, valor = null) => ({ id: Math.random().toString(36).slice(2), seguimentId: s, data: a - d, valor, nota: "" });
+  return { exemple: true, desplacament: 0, nextId: id, seguiments: seg,
+    registres: [r(2, 92), r(2, 61), r(2, 29), r(3, 26, 18.5), r(3, 17, 21), r(3, 9, 19.8), r(4, 340)] };
+}
+function carrega() { try { const t = localStorage.getItem(CLAU); if (t) return JSON.parse(t) } catch (e) {} return exemple() }
+function desa() { try { localStorage.setItem(CLAU, JSON.stringify(dades)) } catch (e) {} }
+dades = carrega();
+const avui = () => avuiReal() + (dades.desplacament || 0);
+
+// ---------- Plantilles ----------
+const PLANTILLES = [
+  ["MEDICAMENT", "Medicament", "Pastilles que es gasten cada dia. T'avisa abans que s'acabin.", { ambEstoc: true, nomUnitat: "pastilla", nomPaquet: "caixa", unitatsPerPaquet: 28, avisEstocDies: 7 }],
+  ["CONSUMIBLE", "Consumible", "Lentilles, càpsules, filtres… Qualsevol cosa que es gasta sola.", { ambEstoc: true, nomUnitat: "unitat", nomPaquet: "paquet", unitatsPerPaquet: 10, avisEstocDies: 5 }],
+  ["CABELL", "Tallar-se el cabell", "Apunta cada cop. En farà la mitjana i t'avisarà quan toqui.", { nom: "Tallar-me el cabell", ambRegistres: true }],
+  ["GASOLINA", "Gasolina", "Cada cop que poses benzina, amb els euros o els litres.", { nom: "Gasolina", ambRegistres: true, ambValor: true, unitatValor: "€" }],
+  ["REVISIO", "Revisió del vehicle", "Cada any (o cada quan vulguis), amb un avís un mes abans.", { nom: "Revisió del cotxe", ambRegistres: true, intervalFixDies: 365, avisAbansDies: 30 }],
+  ["METGE", "Visita mèdica", "Revisions periòdiques: el dentista, l'oculista, l'anàlisi…", { nom: "Visita mèdica", ambRegistres: true, intervalFixDies: 180, avisAbansDies: 14 }],
+  ["PERSONALITZAT", "Personalitzat", "Des de zero: tria si té estoc, registres o totes dues coses.", { ambRegistres: true }],
+];
+const ICONES = {
+  MEDICAMENT: '<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-35 12 12)"/><path d="M9.3 8.1l5.4 7.8"/>',
+  CONSUMIBLE: '<rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16M9 4h6v3H9z"/>',
+  CABELL: '<circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5L20 18M8.5 15.5L20 6"/>',
+  GASOLINA: '<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15M3 20h13M5 10h9M14 8l3 2v7a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
+  REVISIO: '<path d="M5 16l1.5-5h11L19 16M4 16h16v3H4z"/><circle cx="8" cy="19" r="1"/><circle cx="16" cy="19" r="1"/>',
+  METGE: '<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/><path d="M12 10v5M9.5 12.5h5"/>',
+  PERSONALITZAT: '<path d="M12 5v14M5 12h14"/>',
+};
+const ico = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONES[k] || ICONES.PERSONALITZAT}</svg>`;
+function nouDePlantilla(clau) {
+  const a = avui(), p = PLANTILLES.find(x => x[0] === clau) || PLANTILLES[PLANTILLES.length - 1];
+  return { id: 0, nom: "", detall: "", plantilla: p[0], creat: a, ambEstoc: false, nomUnitat: "", nomPaquet: "", unitatsPerPaquet: 0,
+    consumQuantitat: 1, consumCadaDies: 1, consumInici: a, estocUnitats: 0, estocData: a, avisEstocDies: 7, ambRegistres: false,
+    intervalFixDies: null, avisAbansDies: 0, ambValor: false, unitatValor: "", ...p[3] };
+}
+
+// ---------- Rutes (al hash: #inici, #nou, #nou-cabell, #s-3, #edita-3) ----------
+let form = null, dialeg = null, fet = false;
+const app = document.getElementById("app"), capaDialeg = document.getElementById("capa-dialeg");
+function ruta() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  let m;
+  if (h === "nou") return { p: "plantilla" };
+  if ((m = h.match(/^nou-([a-z]+)$/))) return { p: "form", clau: h, plantilla: m[1].toUpperCase() };
+  if ((m = h.match(/^s-(\d+)$/))) return { p: "detall", id: +m[1] };
+  if ((m = h.match(/^edita-(\d+)$/))) return { p: "form", clau: h, id: +m[1] };
+  return { p: "inici" };
+}
+let vista = ruta();
+function ves(hash) { if (location.hash === "#" + hash) { canviaRuta() } else location.hash = hash }
+function canviaRuta() {
+  vista = ruta(); dialeg = null;
+  if (vista.p === "form" && (!form || form.clau !== vista.clau)) {
+    if (vista.id) { const s = trobaSeg(vista.id); if (!s) { vista = { p: "inici" } } else form = { clau: vista.clau, original: s, f: { ...s }, error: null } }
+    else form = { clau: vista.clau, original: null, f: { ...nouDePlantilla(vista.plantilla), avuiJa: false }, error: null };
+  }
+  pinta(true); window.scrollTo({ top: 0, behavior: "instant" });
+}
+function pinta(nova) {
+  app.innerHTML = `<div class="${nova ? "entra" : ""}">${vista.p === "inici" ? inici() : vista.p === "plantilla" ? triaPlantilla() : vista.p === "form" ? formulari() : detall()}</div>`;
+  capaDialeg.innerHTML = dialeg ? dialeg.html : "";
+  document.querySelectorAll("[data-nav]").forEach(a => a.toggleAttribute("aria-current", a.dataset.nav === (vista.p === "inici" ? "inici" : vista.p === "plantilla" || (vista.p === "form" && !form?.original) ? "nou" : "")));
+  document.querySelectorAll("[data-nav][aria-current]").forEach(a => a.setAttribute("aria-current", "page"));
+  if (dialeg) { const i = capaDialeg.querySelector("input"); (i || capaDialeg.querySelector("[data-acc=accepta]"))?.focus() }
+}
+function trobaSeg(id) { return dades.seguiments.find(s => s.id === id) }
+
+// ---------- Gràfics ----------
+/** Un anell que s'omple: el temps des de l'últim cop sobre cada quan toca. */
+function anell(frac, mida, gruix, color, pista = "var(--sup2)") {
+  const r = (mida - gruix) / 2, c = 2 * Math.PI * r, f = Math.max(0, Math.min(1, frac));
+  return `<svg width="${mida}" height="${mida}" viewBox="0 0 ${mida} ${mida}" aria-hidden="true">
+    <circle cx="${mida / 2}" cy="${mida / 2}" r="${r}" fill="none" stroke="${pista}" stroke-width="${gruix}"/>
+    ${f > 0 ? `<circle cx="${mida / 2}" cy="${mida / 2}" r="${r}" fill="none" stroke="${color}" stroke-width="${gruix}" stroke-linecap="round" stroke-dasharray="${Math.max(0.01, c * f - (f < 1 ? 0 : 0))} ${c}" transform="rotate(-90 ${mida / 2} ${mida / 2})"/>` : ""}</svg>`;
+}
+/** Un dipòsit que es buida: els dies d'estoc que queden, amb la ratlla de l'avís. */
+function diposit(frac, avis, w, h, color) {
+  const f = Math.max(0, Math.min(1, frac)), ih = h - 8, y = 4 + ih * (1 - f), ya = 4 + ih * (1 - Math.min(1, avis)), id = "d" + Math.random().toString(36).slice(2, 8);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+    <defs><clipPath id="${id}"><rect x="4" y="4" width="${w - 8}" height="${ih}" rx="7"/></clipPath></defs>
+    <rect x="1" y="1" width="${w - 2}" height="${h - 2}" rx="10" fill="var(--fons)" stroke="var(--linia)" stroke-width="2"/>
+    <rect x="4" y="${y}" width="${w - 8}" height="${4 + ih - y}" fill="${color}" clip-path="url(#${id})"/>
+    <line x1="0" x2="${w}" y1="${ya}" y2="${ya}" stroke="var(--text)" stroke-width="1.5" stroke-dasharray="3 3"/></svg>`;
+}
+const escalaEstoc = s => Math.max(30, s.avisEstocDies * 3);
+const usaEstocDe = ({ s, e, rr }) => e && e.dies != null && (!rr || rr.falten == null || e.dies - s.avisEstocDies <= rr.falten - s.avisAbansDies);
+function graficFila(r) {
+  const { s, e, rr } = r;
+  if (usaEstocDe(r)) { const d = Math.max(0, e.dies), es = escalaEstoc(s);
+    return `<div class="grafic">${diposit(d / es, s.avisEstocDies / es, 54, 66, r.estat === "TOCA" ? "var(--fort)" : r.estat === "AVIAT" ? "var(--fort-suau)" : "var(--sup2)")}<b${r.estat === "TOCA" ? ' style="color:var(--tinta)"' : ""}>${d}</b></div><span>dies</span>` }
+  if (rr && rr.desDe != null) { const frac = rr.interval ? rr.desDe / rr.interval : 0;
+    const et = rr.falten == null ? "dies" : rr.falten < 0 ? "de retard" : rr.falten === 0 ? "toca avui" : "falten";
+    const n = rr.falten == null ? rr.desDe : Math.abs(rr.falten);
+    return `<div class="grafic">${anell(frac, 68, 7, frac >= 1 || r.estat === "TOCA" ? "var(--fort)" : "var(--text)")}<b>${n}</b></div><span>${et}</span>` }
+  return `<div class="grafic">${anell(0, 68, 7, "var(--text)")}<b>—</b></div><span>sense dades</span>`;
+}
+function visualEstoc(s, e, a) {
+  const per = s.nomPaquet ? s.unitatsPerPaquet : 0, [p, sol] = enPaquets(e.unitats, per);
+  let h = `<div class="panell"><div class="eti suau">${per ? `${maj(plural(s.nomPaquet))} que tens` : maj(plural(s.nomUnitat))}</div><div class="caixes">`;
+  const caixa = `<svg width="46" height="56" viewBox="0 0 46 56" aria-hidden="true"><rect x="2" y="2" width="42" height="52" rx="6" fill="var(--fort)" stroke="var(--fort-f)" stroke-width="2"/><path d="M2 14h42" stroke="var(--fort-f)" stroke-width="2"/><rect x="10" y="24" width="26" height="4" rx="2" fill="var(--tinta)" opacity=".55"/><rect x="10" y="32" width="18" height="4" rx="2" fill="var(--tinta)" opacity=".35"/></svg>`;
+  h += caixa.repeat(Math.min(p, 8)) + (p > 8 ? `<b class="mes">+${p - 8}</b>` : "");
+  const cel = per || Math.min(56, Math.ceil(sol));
+  if (cel && (sol > 0 || p === 0)) {
+    const cols = per % 7 === 0 ? 7 : per % 5 === 0 ? 5 : per % 4 === 0 ? 4 : Math.min(cel, 8);
+    const plenes = Math.floor(sol + EPS), gastades = cel - plenes;
+    h += `<div class="blister" style="grid-template-columns:repeat(${cols},16px)" role="img" aria-label="${xifra(sol)} de ${cel}">` +
+      Array.from({ length: cel }, (_, i) => `<i class="${i >= gastades ? "ple" : ""}"></i>`).join("") + `</div>`;
+  }
+  h += `</div></div>`;
+  if (e.dies != null) {
+    const dl = (dataDe(a).getUTCDay() + 6) % 7, inici = a - dl, finsAvis = e.finsAl - s.avisEstocDies;
+    h += `<div class="panell"><div class="eti suau">Les properes setmanes</div><div class="calendari">` +
+      ["dl", "dt", "dc", "dj", "dv", "ds", "dg"].map(d => `<div class="cap">${d}</div>`).join("") +
+      Array.from({ length: Math.min(9, Math.max(5, Math.ceil((e.finsAl + 4 - inici) / 7))) * 7 }, (_, i) => { const d = inici + i, cl = [];
+        if (d < a) cl.push("passat"); else if (d > e.finsAl) cl.push("sense"); else if (d > finsAvis) cl.push("avisa"); else cl.push("te");
+        if (d === a) cl.push("avui");
+        return `<div class="${cl.join(" ")}">${dataDe(d).getUTCDate()}</div>` }).join("") + `</div>
+      <div class="llegenda"><span><i style="background:var(--sup2)"></i>en tens</span><span><i style="background:var(--fort)"></i>t'avisaré</span><span><i style="border:1.5px dashed var(--suau)"></i>sense estoc</span><span><i style="border:2px solid var(--text)"></i>avui</span></div></div>`;
+  }
+  return h;
+}
+function barres(valors, etiquetes, ref, refText, unitat) {
+  const max = Math.max(...valors, ref || 0) * 1.1 || 1, alt = 126;
+  return `<div class="barres">${ref ? `<div class="mitjana" style="bottom:${(ref / max) * alt}px"><span>${refText}</span></div>` : ""}` +
+    valors.map((v, i) => `<div class="${i === valors.length - 1 ? "ultima" : ""}"><i style="height:${Math.max(3, (v / max) * alt)}px"></i></div>`).join("") +
+    `</div><div class="eixos">${etiquetes.map((t, i) => `<span><b>${xifra(valors[i])}${unitat}</b>${t}</span>`).join("")}</div>`;
+}
+function visualRegistres(s, rr, regs) {
+  const cron = [...regs].sort((x, y) => x.data - y.data);
+  let h = "";
+  if (cron.length >= 2) {
+    const ints = [], ets = [];
+    for (let i = 1; i < cron.length; i++) { ints.push(cron[i].data - cron[i - 1].data); ets.push(dataCurta(cron[i].data)) }
+    const n = Math.min(10, ints.length);
+    const ref = s.intervalFixDies || rr.mitjana, refText = s.intervalFixDies ? `cada ${s.intervalFixDies}` : `mitjana ${xifra(rr.mitjana)} d`;
+    h += `<div class="panell"><div class="eti suau">Dies entre cada cop</div>${barres(ints.slice(-n), ets.slice(-n), ref, refText, " d")}</div>`;
+  }
+  const vals = cron.filter(g => g.valor != null);
+  if (s.ambValor && vals.length) {
+    const n = Math.min(10, vals.length), v = vals.slice(-n);
+    h += `<div class="panell"><div class="eti suau">${esc(s.unitatValor || "Xifra")} cada cop</div>${barres(v.map(g => g.valor), v.map(g => dataCurta(g.data)), rr.mitjanaValor, `mitjana ${xifra(rr.mitjanaValor)}`, "")}</div>`;
+  }
+  return h;
+}
+
+// ---------- Inici ----------
+function liniaFila(r) {
+  const { s, e, rr } = r;
+  if (usaEstocDe(r)) return `Queden ${textEstoc(s, e.unitats)}`;
+  if (rr && rr.falten != null) return `Darrer: ${faT(rr.desDe).toLowerCase()} · cada ${diesT(rr.interval)}`;
+  if (rr && rr.desDe != null) return "Registra'l un altre cop i calcularé cada quan toca.";
+  if (e) return `Queden ${textEstoc(s, e.unitats)}`;
+  return "Encara no hi ha cap registre.";
+}
+function avisosDAvui(llista) {
+  return llista.filter(r => r.estat === "TOCA").map(r => {
+    const { s, e, rr } = r;
+    if (e && e.estat === "TOCA") return `<b>${esc(s.nom)}</b>: ${e.unitats <= 0 ? "s'ha acabat" : `només et queda per a ${diesT(e.dies)}`}. Demana'n més.`;
+    if (rr.falten > 0) return `<b>${esc(s.nom)}</b>: toca ${faltenT(rr.falten)}.`;
+    return `<b>${esc(s.nom)}</b>: ja toca, l'últim cop va ser fa ${diesT(rr.desDe)}.`;
+  });
+}
+function targetaSeg(r) {
+  const cl = r.estat === "TOCA" ? "toca" : r.estat === "AVIAT" ? "aviat" : "";
+  return `<a class="seg brilla ${cl}" href="#s-${r.s.id}"><div class="graf">${graficFila(r)}</div>
+    <div class="creix">${r.estat === "TOCA" ? `<span class="insignia">Toca ara</span>` : r.estat === "AVIAT" ? `<span class="insignia aviat">Aviat</span>` : ""}
+    <h3>${esc(r.s.nom)}</h3>${r.s.detall ? `<div class="det">${esc(r.s.detall)}</div>` : ""}<p class="linia">${esc(liniaFila(r))}</p></div></a>`;
+}
+function inici() {
+  const a = avui();
+  const llista = dades.seguiments.map(s => resum(s, a)).sort((x, y) => x.urgencia - y.urgencia);
+  const g = { toca: llista.filter(r => r.estat === "TOCA"), aviat: llista.filter(r => r.estat === "AVIAT"), be: llista.filter(r => r.estat === "BE" || r.estat === "SENSE") };
+  const grup = (t, l) => l.length ? `<section class="seccio"><div class="seccio-cap"><h2>${t}</h2><span class="compte">${l.length}</span></div><div class="graella">${l.map(targetaSeg).join("")}</div></section>` : "";
+  const avisos = avisosDAvui(llista);
+  return `<section class="portada">
+      <span class="eti">${dataLlarga(a)}${dades.desplacament ? " · simulat" : ""}</span>
+      <h1>${g.toca.length ? `Tens <span class="degradat-text">${g.toca.length === 1 ? "una cosa" : `${g.toca.length} coses`}</span> que toquen ara` : `Tot <span class="degradat-text">en ordre</span>, de moment`}</h1>
+      <p class="destacat">Les pastilles que es gasten soles, el cabell, la gasolina, les revisions. El Tracker compta els dies i t'avisa abans que se t'acabin o quan et toqui.</p>
+      ${dades.exemple ? `<p class="petit">Són dades d'exemple per provar-ho. Les pots esborrar a baix de tot.</p>` : ""}
+      <div class="accions"><a class="boto gran" href="#nou">Nou seguiment <span class="fletxa" aria-hidden="true">→</span></a></div>
+      ${llista.length ? `<div class="xifres"><div class="xifra-r toca"><b>${g.toca.length}</b>toquen ara</div><div class="xifra-r"><b>${g.aviat.length}</b>aviat</div><div class="xifra-r"><b>${g.be.length}</b>en ordre</div></div>` : ""}
+    </section>
+    ${avisos.length ? `<div class="avisos"><div class="eti">Avisos d'avui · al mòbil, notificació a les 9 h</div>${avisos.map(t => `<div class="avis"><div>${t}</div></div>`).join("")}</div>` : ""}
+    ${llista.length ? "" : `<div class="buit" style="margin-top:24px"><span class="ma">Res a vigilar, de moment.</span><p class="petit">Afegeix les pastilles, el cabell, la gasolina…</p><a class="boto" href="#nou" style="margin-top:10px">Nou seguiment</a></div>`}
+    ${grup("Toca ara", g.toca)}${grup("Aviat", g.aviat)}${grup("Tot en ordre", g.be)}
+    <section class="seccio"><div class="simulador"><span class="eti">Només al prototip: passa el temps</span>
+      <p class="petit">Avança dies per veure com es gasten les pastilles i com arriben els avisos.${dades.desplacament ? ` Ara mateix vas ${diesT(dades.desplacament)} per davant.` : ""}</p>
+      <div class="botons"><button class="boto secundari" data-acc="dia">+1 dia</button><button class="boto secundari" data-acc="setmana">+7 dies</button>${dades.desplacament ? `<button class="boto secundari" data-acc="real">Torna a avui</button>` : ""}
+      <button class="boto secundari" data-acc="exemple">Torna a l'exemple</button><button class="boto secundari perill" data-acc="buida">Esborra-ho tot</button></div>
+    </div></section>`;
+}
+
+// ---------- Plantilles i formulari ----------
+function triaPlantilla() {
+  return `<a class="torna" href="#inici">← Tots els seguiments</a>
+    <section class="portada" style="padding-top:12px"><span class="eti">Nou seguiment</span><h1>Què vols vigilar?</h1>
+    <p class="destacat">Tria per on començar. Després ho pots canviar tot.</p></section>
+    <div class="plantilles">${PLANTILLES.map(p => `<a class="plantilla brilla ${p[0] === "PERSONALITZAT" ? "lliure" : ""}" href="#nou-${p[0].toLowerCase()}"><span class="ico">${ico(p[0])}</span><h3>${p[1]}</h3><p>${p[2]}</p></a>`).join("")}</div>`;
+}
+function camp(id, et, val, { n = false, ajuda = "", tipus = "" } = {}) {
+  return `<label class="camp" for="f-${id}">${esc(et)}<input id="f-${id}" ${tipus ? `type="${tipus}"` : ""} ${n ? 'inputmode="decimal"' : ""} value="${esc(val)}">${ajuda ? `<small>${esc(ajuda)}</small>` : ""}</label>`;
+}
+function inter(id, t, d, on) {
+  return `<label class="interruptor" for="f-${id}"><span class="creix"><b>${t}</b><span class="petit">${d}</span></span><input type="checkbox" id="f-${id}" ${on ? "checked" : ""} data-redibuixa></label>`;
+}
+function formulari() {
+  const f = form.f, nou = !form.original, demanaEstoc = nou || !form.original.ambEstoc;
+  const u = f.nomUnitat || "unitat", fix = f.fix ?? f.intervalFixDies != null;
+  const p = PLANTILLES.find(x => x[0] === f.plantilla);
+  return `<a class="torna" href="${nou ? "#nou" : `#s-${form.original.id}`}">← ${nou ? "Canvia de plantilla" : "Torna al seguiment"}</a>
+    <section class="portada" style="padding-top:12px;padding-bottom:0"><span class="eti">${nou ? `Nou seguiment · ${esc(p ? p[1] : "")}` : "Edita"}</span><h1>${nou ? "Com és?" : esc(form.original.nom)}</h1></section>
+    <form class="formulari" id="formulari" novalidate>
+      <fieldset><div class="fila-camps">${camp("nom", "Nom", f.nom)}${camp("detall", "Detall", f.detall, { ajuda: "La marca, el vehicle, el metge… (opcional)" })}</div></fieldset>
+      <fieldset>${inter("ambEstoc", "Té un estoc que es gasta sol", "Cada dia et resta el que gastes i t'avisa abans que s'acabi.", f.ambEstoc)}
+      ${f.ambEstoc ? `<div class="subgrup">
+        <div class="fila-camps">${camp("nomUnitat", "Unitat", f.nomUnitat, { ajuda: "Per exemple, «pastilla»" })}${camp("nomPaquet", "Paquet (opcional)", f.nomPaquet, { ajuda: "Per exemple, «caixa»" })}${f.nomPaquet ? camp("unitatsPerPaquet", maj(`${plural(u)} per ${f.nomPaquet}`), f.unitatsPerPaquet || "", { n: true }) : ""}</div>
+        <div class="fila-camps">${camp("consumQuantitat", maj(`${plural(u)} cada cop`), xifra(f.consumQuantitat), { n: true })}${camp("consumCadaDies", "Cada quants dies", f.consumCadaDies, { n: true })}${camp("avisEstocDies", "Avisa'm quan quedin (dies)", f.avisEstocDies, { n: true })}</div>
+        ${demanaEstoc ? `<span class="eti suau" style="margin-top:6px">Què tens ara</span>
+          <div class="fila-camps">${f.nomPaquet ? camp("paquetsAra", maj(plural(f.nomPaquet)), f.paquetsAra || "", { n: true }) : ""}${camp("soltesAra", f.nomPaquet ? maj(`${plural(u)} soltes`) : maj(plural(u)), f.soltesAra || "", { n: true })}</div>
+          ${inter("avuiJa", "Avui ja l'has gastat", "Si no, també et restaré el d'avui.", f.avuiJa)}` : ""}
+      </div>` : ""}</fieldset>
+      <fieldset>${inter("ambRegistres", "Registra cada cop que ho fas", "Compta els dies, en fa la mitjana i t'avisa quan toca.", f.ambRegistres)}
+      ${f.ambRegistres ? `<div class="subgrup">
+        ${inter("fix", "Cada quan toca és fix", "Si no, faré servir la mitjana dels teus registres.", fix)}
+        <div class="fila-camps">${fix ? camp("intervalFixDies", "Cada quants dies toca", f.intervalFixDies ?? 30, { n: true }) : ""}${camp("avisAbansDies", "Avisa'm aquests dies abans", f.avisAbansDies, { n: true })}</div>
+        ${inter("ambValor", "Cada cop porta una xifra", "Euros, litres, quilòmetres…", f.ambValor)}
+        ${f.ambValor ? `<div class="fila-camps">${camp("unitatValor", "Unitat de la xifra", f.unitatValor, { ajuda: "€, L, km…" })}</div>` : ""}
+        ${nou ? `<div class="fila-camps"><label class="camp" for="f-darrer">Quan va ser l'últim cop?<input type="date" id="f-darrer" max="${dataDe(avui()).toISOString().slice(0, 10)}" value="${f.darrer || ""}"><small>Opcional</small></label></div>` : ""}
+      </div>` : ""}</fieldset>
+      ${form.error ? `<div class="error" role="alert">${form.error}</div>` : ""}
+      <div class="peu-form"><button class="boto gran" type="submit">Desa</button><a class="boto secundari gran" href="${nou ? "#nou" : `#s-${form.original.id}`}">Cancel·la</a></div>
+    </form>`;
+}
+/** Llegeix el formulari a form.f sense desar res. */
+function llegeixForm() {
+  const f = form.f, v = id => { const el = document.getElementById("f-" + id); return el ? (el.type === "checkbox" ? el.checked : el.value) : undefined };
+  for (const k of ["nom", "detall", "nomUnitat", "nomPaquet", "unitatsPerPaquet", "consumCadaDies", "avisEstocDies", "avisAbansDies", "unitatValor", "paquetsAra", "soltesAra"]) { const x = v(k); if (x !== undefined) f[k] = x }
+  const q = v("consumQuantitat"); if (q !== undefined) f.consumQuantitat = num(q) ?? q;
+  for (const k of ["ambEstoc", "ambRegistres", "ambValor", "avuiJa"]) { const x = v(k); if (x !== undefined) f[k] = x }
+  const fix = v("fix"); if (fix !== undefined) f.fix = fix;
+  const iv = v("intervalFixDies"); if (iv !== undefined) f.intervalFixDies = iv;
+  const d = v("darrer"); if (d !== undefined) f.darrer = d;
+}
+function desaForm() {
+  llegeixForm();
+  const f = form.f, a = avui(), orig = form.original;
+  const q = num(f.consumQuantitat), c = Math.floor(num(f.consumCadaDies) ?? 0), pp = Math.floor(num(f.unitatsPerPaquet) ?? 0);
+  const fix = f.fix ?? f.intervalFixDies != null;
+  const err = !String(f.nom).trim() ? "Posa-li un nom." : !f.ambEstoc && !f.ambRegistres ? "Tria si té estoc, registres o totes dues coses."
+    : f.ambEstoc && !String(f.nomUnitat).trim() ? "Digues com es diu una unitat (per exemple, «pastilla»)."
+    : f.ambEstoc && (q == null || q < 0 || c < 1) ? "Revisa quant se'n gasta i cada quants dies."
+    : f.ambRegistres && fix && (num(f.intervalFixDies) ?? 0) < 1 ? "Cada quants dies toca ha de ser 1 o més." : null;
+  if (err) { form.error = err; pinta(); document.querySelector(".error")?.scrollIntoView({ block: "center" }); return }
+  let s = { ...(orig || {}), ...f, nom: String(f.nom).trim(), detall: String(f.detall).trim(), nomUnitat: String(f.nomUnitat).trim(), nomPaquet: String(f.nomPaquet).trim(),
+    unitatsPerPaquet: pp, consumQuantitat: q ?? 1, consumCadaDies: c || 1, avisEstocDies: Math.max(0, Math.floor(num(f.avisEstocDies) ?? 0)),
+    intervalFixDies: f.ambRegistres && fix ? Math.floor(num(f.intervalFixDies)) : null, avisAbansDies: Math.max(0, Math.floor(num(f.avisAbansDies) ?? 0)) };
+  for (const k of ["paquetsAra", "soltesAra", "avuiJa", "fix", "darrer"]) delete s[k];
+  if (s.ambEstoc && (!orig || !orig.ambEstoc)) {
+    s.estocUnitats = (num(f.paquetsAra) ?? 0) * pp + (num(f.soltesAra) ?? 0);
+    s.estocData = f.avuiJa ? a : a - 1; s.consumInici = a;
+  } else if (s.ambEstoc && orig && (orig.consumCadaDies !== s.consumCadaDies || orig.consumQuantitat !== s.consumQuantitat)) {
+    s.estocUnitats = unitatsAvui(orig, a); s.estocData = a; s.consumInici = a + 1;
+  }
+  if (!orig) { s.id = dades.nextId++; dades.seguiments.push(s) } else dades.seguiments[dades.seguiments.findIndex(x => x.id === s.id)] = s;
+  if (!orig && s.ambRegistres && f.darrer) afegeixRegistre(s.id, Math.floor(Date.parse(f.darrer) / 86400000), null, "");
+  dades.exemple = dades.exemple && true;
+  desa(); form = null; ves(`s-${s.id}`);
+}
+
+// ---------- Detall ----------
+function afegeixRegistre(id, dia, valor, nota) { dades.registres.push({ id: Math.random().toString(36).slice(2), seguimentId: id, data: dia, valor, nota: (nota || "").trim() }); desa() }
+function canviaEstoc(id, f) { const s = trobaSeg(id), a = avui(); s.estocUnitats = Math.max(0, f(unitatsAvui(s, a))); s.estocData = a; desa(); pinta() }
+function detall() {
+  const s = trobaSeg(vista.id);
+  if (!s) return `<div class="buit" style="margin-top:48px"><span class="ma">Aquest seguiment ja no hi és.</span><a class="boto" href="#inici">Torna als seguiments</a></div>`;
+  const a = avui(), r = resum(s, a), { e, rr } = r, p = PLANTILLES.find(x => x[0] === s.plantilla);
+  let h = `<a class="torna" href="#inici">← Tots els seguiments</a>
+    <div class="det-cap"><div><span class="eti">${esc(p ? p[1] : "Seguiment")}${r.estat === "TOCA" ? " · toca ara" : r.estat === "AVIAT" ? " · aviat" : ""}</span><h1>${esc(s.nom)}</h1>${s.detall ? `<p class="destacat">${esc(s.detall)}</p>` : ""}</div>
+    <div class="det-acc"><a class="boto secundari" href="#edita-${s.id}">Edita</a><button class="boto secundari perill" data-acc="esborra">Esborra</button></div></div>`;
+  if (e) {
+    const linia = e.dies == null ? "No es gasta sol." : e.unitats <= 0 || e.dies < 0 ? "S'ha acabat. Demana'n més!" : e.dies === 0 ? "Avui ha estat l'últim. Demana'n més!" : `Tens per a ${diesT(e.dies)}, fins al ${dataCurta(e.finsAl).replace(/\.$/, "")}.`;
+    const esE = escalaEstoc(s), dE = Math.max(0, e.dies ?? 0), tocaE = e.estat === "TOCA";
+    h += `<div class="bloc-det"><div class="columna">
+      <div class="resum ${tocaE ? "toca" : ""}"><div class="fila">
+        ${e.dies != null ? `<div class="grafic gran">${diposit(dE / esE, s.avisEstocDies / esE, 84, 116, tocaE ? "var(--fons)" : e.estat === "AVIAT" ? "var(--fort-suau)" : "var(--fort)")}<b style="font-size:30px;${!tocaE && e.estat !== "AVIAT" ? "color:var(--tinta)" : ""}">${dE}</b></div>` : ""}
+        <div class="creix" style="display:flex;flex-direction:column;gap:6px"><span class="eti suau">Et queden</span><h2>${esc(textEstoc(s, e.unitats))}</h2><p>${linia}</p></div></div>
+        <p class="petit">${xifra(s.consumQuantitat)} ${esc(nom(s.nomUnitat, s.consumQuantitat))} ${s.consumCadaDies <= 1 ? "cada dia" : `cada ${s.consumCadaDies} dies`} · la ratlla és l'avís, quan en quedin per a ${diesT(s.avisEstocDies)}</p></div>
+      <div class="parell"><button class="boto" data-acc="compra">He comprat</button><button class="boto secundari" data-acc="corregeix">Corregeix</button></div>
+      <div class="parell"><button class="boto secundari" data-acc="menys" aria-label="Treu-ne una">−1</button><button class="boto secundari" data-acc="mes" aria-label="Afegeix-ne una">+1</button></div>
+      <p class="petit">−1 si un dia n'has gastat de més; +1 si un dia no n'has gastat.</p>
+    </div><div class="columna">${visualEstoc(s, e, a)}</div></div>`;
+  }
+  if (rr) {
+    const linia = rr.propera != null ? `Toca el ${dataCurta(rr.propera)} (${faltenT(rr.falten)}).` : rr.nombre === 1 ? "Registra'l un altre cop i calcularé cada quan toca." : "Encara no hi ha cap registre.";
+    const int = s.intervalFixDies ? `Cada ${diesT(s.intervalFixDies)} (fix).` : rr.mitjana != null ? `De mitjana, cada ${xifra(rr.mitjana)} dies (${rr.nombre} registres).` : "";
+    const tocaR = rr.estat === "TOCA", fr = rr.interval && rr.desDe != null ? rr.desDe / rr.interval : 0;
+    let hist = "";
+    if (r.regs.length) {
+      hist = `<div class="panell"><div class="eti suau">Historial</div><div class="historial">` + r.regs.map((g, i) => {
+        const ant = r.regs[i + 1], parts = [];
+        if (ant) parts.push(`+${g.data - ant.data} dies`); if (g.valor != null) parts.push(`${xifra(g.valor)} ${esc(s.unitatValor)}`); if (g.nota) parts.push(esc(g.nota));
+        return `<div><div class="creix"><span class="data">${dataCurta(g.data)}</span>${parts.length ? `<div class="petit">${parts.join(" · ")}</div>` : ""}</div><button class="esborra-reg" data-esborra-reg="${g.id}" aria-label="Esborra el registre del ${dataCurta(g.data)}">×</button></div>`;
+      }).join("") + `</div></div>`;
+    }
+    h += `<div class="bloc-det"><div class="columna">
+      <div class="resum ${tocaR ? "toca" : ""}"><div class="fila">
+        <div class="grafic gran">${anell(fr, 128, 12, tocaR ? "var(--tinta)" : "var(--fort)", tocaR ? "rgba(0, 0, 0, .14)" : "var(--sup2)")}<b><span style="display:flex;flex-direction:column;align-items:center">${rr.desDe ?? "—"}<small${tocaR ? ' style="color:var(--tinta)"' : ""}>${rr.interval ? `de ${rr.interval} dies` : "dies"}</small></span></b></div>
+        <div class="creix" style="display:flex;flex-direction:column;gap:6px"><span class="eti suau">L'últim cop</span><h2>${rr.desDe != null ? faT(rr.desDe) : "Mai"}</h2><p>${linia}</p></div></div>
+        ${int ? `<p class="petit">${int}</p>` : ""}
+        ${s.ambValor && rr.mitjanaValor != null ? `<p class="petit">Mitjana: ${xifra(rr.mitjanaValor)} ${esc(s.unitatValor)} · Total: ${xifra(rr.totalValor)} ${esc(s.unitatValor)}</p>` : ""}</div>
+      <button class="boto gran ample" data-acc="avui">${fet ? `<span class="contesta">Fet!</span>` : "Ho he fet avui"}</button>
+      <button class="boto secundari ample" data-acc="altre">Un altre dia…</button>
+    </div><div class="columna">${visualRegistres(s, rr, r.regs)}${hist}${!r.regs.length ? `<div class="buit"><span class="ma">Encara cap registre</span><p class="petit">Prem «Ho he fet avui» la propera vegada.</p></div>` : ""}</div></div>`;
+  }
+  return h;
+}
+
+// ---------- Diàlegs ----------
+function obreDialeg(titol, cos, accio, ok = "D'acord", perill = false) {
+  dialeg = { accio, html: `<div class="vel" data-tanca><form class="dialeg" role="dialog" aria-modal="true" aria-label="${esc(titol)}" id="form-dialeg" novalidate><h2>${esc(titol)}</h2>${cos}
+    <div class="botons"><button type="button" class="boto secundari" data-acc="tanca">Cancel·la</button><button type="submit" class="boto ${perill ? "secundari perill" : ""}" data-acc="accepta">${ok}</button></div></form></div>` };
+  pinta();
+}
+function dialegEstoc(s, titol, text, onTotal) {
+  const amb = s.nomPaquet && s.unitatsPerPaquet > 0;
+  obreDialeg(titol, `<p>${text}</p><div class="fila-camps">${amb ? camp("dp", maj(plural(s.nomPaquet)), "", { n: true }) : ""}${camp("ds", amb ? maj(`${plural(s.nomUnitat)} soltes`) : maj(plural(s.nomUnitat)), "", { n: true })}</div>`,
+    () => onTotal((amb ? (num(document.getElementById("f-dp").value) ?? 0) * s.unitatsPerPaquet : 0) + (num(document.getElementById("f-ds").value) ?? 0)));
+}
+function registra(s, dia) {
+  const fes = (v, n) => { afegeixRegistre(s.id, dia, v, n); dialeg = null; if (dia === avui()) { fet = true; setTimeout(() => { fet = false; if (vista.p === "detall") pinta() }, 1600) } pinta() };
+  if (!s.ambValor) return fes(null, "");
+  obreDialeg(dataLlarga(dia), `<div class="fila-camps">${camp("dv", `Xifra (${s.unitatValor})`, "", { n: true })}${camp("dn", "Nota (opcional)", "")}</div>`,
+    () => fes(num(document.getElementById("f-dv").value), document.getElementById("f-dn").value), "Desa");
+}
+
+// ---------- Esdeveniments ----------
+window.addEventListener("hashchange", canviaRuta);
+app.addEventListener("change", ev => { if (ev.target.matches("[data-redibuixa]") && vista.p === "form") { llegeixForm(); pinta() } });
+app.addEventListener("focusout", ev => { if (vista.p === "form" && /^f-(nomUnitat|nomPaquet)$/.test(ev.target.id)) { llegeixForm(); pinta() } });
+document.addEventListener("submit", ev => {
+  ev.preventDefault();
+  if (ev.target.id === "formulari") return desaForm();
+  if (ev.target.id === "form-dialeg" && dialeg) return dialeg.accio();
+});
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("button, [data-tanca]"); if (!t || t.closest(".desplegable")) return;
+  if (t.matches("[data-tanca]")) { if (ev.target === t) { dialeg = null; pinta() } return }
+  if (t.type === "submit" && t.form) return;
+  if (t.dataset.esborraReg) {
+    const g = dades.registres.find(x => x.id === t.dataset.esborraReg);
+    return obreDialeg("Esborrar aquest registre?", `<p>${dataLlarga(g.data)}</p>`, () => { dades.registres = dades.registres.filter(x => x !== g); desa(); dialeg = null; pinta() }, "Esborra", true);
+  }
+  const s = vista.id ? trobaSeg(vista.id) : null;
+  switch (t.dataset.acc) {
+    case "esborra": return obreDialeg(`Esborrar «${s.nom}»?`, `<p>S'esborrarà amb tot l'historial. No es pot desfer.</p>`, () => {
+      dades.seguiments = dades.seguiments.filter(x => x.id !== s.id); dades.registres = dades.registres.filter(x => x.seguimentId !== s.id); desa(); ves("inici") }, "Esborra", true);
+    case "menys": return canviaEstoc(s.id, u => u - 1);
+    case "mes": return canviaEstoc(s.id, u => u + 1);
+    case "compra": return dialegEstoc(s, "He comprat", "Quant n'has comprat? Se suma al que tens.", n => { dialeg = null; canviaEstoc(s.id, u => u + n) });
+    case "corregeix": return dialegEstoc(s, "Corregeix", "Quant en tens exactament ara?", n => { dialeg = null; canviaEstoc(s.id, () => n) });
+    case "avui": return registra(s, avui());
+    case "altre": return obreDialeg("Quin dia va ser?", `<label class="camp" for="f-dd">Dia<input type="date" id="f-dd" max="${dataDe(avui()).toISOString().slice(0, 10)}" value="${dataDe(avui() - 1).toISOString().slice(0, 10)}"></label>`, () => {
+      const v = document.getElementById("f-dd").value; if (!v) return; dialeg = null; registra(s, Math.floor(Date.parse(v) / 86400000)) });
+    case "tanca": dialeg = null; return pinta();
+    case "dia": dades.desplacament = (dades.desplacament || 0) + 1; desa(); return pinta();
+    case "setmana": dades.desplacament = (dades.desplacament || 0) + 7; desa(); return pinta();
+    case "real": dades.desplacament = 0; desa(); return pinta();
+    case "buida": return obreDialeg("Esborrar-ho tot?", "<p>S'esborraran tots els seguiments d'aquest navegador.</p>", () => { dades = { exemple: false, desplacament: 0, nextId: 1, seguiments: [], registres: [] }; desa(); ves("inici") }, "Esborra", true);
+    case "exemple": dades = exemple(); desa(); return ves("inici");
+  }
+});
+document.addEventListener("keydown", ev => { if (ev.key === "Escape" && dialeg) { dialeg = null; pinta() } });
+// Brillantor que segueix el cursor, com a la web de municipis
+document.addEventListener("pointermove", ev => { const b = ev.target.closest?.(".brilla"); if (!b) return; const r = b.getBoundingClientRect(); b.style.setProperty("--x", `${ev.clientX - r.left}px`); b.style.setProperty("--y", `${ev.clientY - r.top}px`) });
+
+// ---------- Tema ----------
+const temaEl = document.getElementById("tema"), temaBoto = document.getElementById("tema-boto");
+function posaTema(t) {
+  if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem("tracker-tema", t) } catch (e) {}
+  temaEl.querySelectorAll("[data-tema]").forEach(b => b.setAttribute("aria-checked", String(b.dataset.tema === t)));
+}
+let temaDesat = "auto"; try { temaDesat = localStorage.getItem("tracker-tema") || "auto" } catch (e) {}
+posaTema(temaDesat);
+temaBoto.addEventListener("click", () => { const o = !temaEl.classList.contains("obert"); temaEl.classList.toggle("obert", o); temaBoto.setAttribute("aria-expanded", String(o)) });
+temaEl.addEventListener("click", ev => { const b = ev.target.closest("[data-tema]"); if (!b) return; posaTema(b.dataset.tema); temaEl.classList.remove("obert"); temaBoto.setAttribute("aria-expanded", "false"); temaBoto.focus() });
+document.addEventListener("click", ev => { if (!temaEl.contains(ev.target)) { temaEl.classList.remove("obert"); temaBoto.setAttribute("aria-expanded", "false") } });
+
+canviaRuta();
+</script>
