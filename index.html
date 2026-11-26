@@ -233,10 +233,6 @@ label.camp input:focus { outline: 2px solid var(--fort); outline-offset: 0; bord
 .error { color: var(--error); font-weight: 600 }
 .peu-form { display: flex; gap: 10px; flex-wrap: wrap }
 
-/* Gestió de les dades */
-.gestio { border: 1px dashed var(--fort-f); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--fons) }
-.gestio .botons { display: flex; flex-wrap: wrap; gap: 8px }
-
 /* Diàlegs centrats */
 .vel { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: rgba(0, 0, 0, .42);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: apareix .2s ease-out;
@@ -550,16 +546,13 @@ function inici() {
       <span class="eti">${dataLlarga(a)}</span>
       <h1>${g.toca.length ? `Tens <span class="degradat-text">${g.toca.length === 1 ? "una cosa" : `${g.toca.length} coses`}</span> que toquen ara` : `Tot <span class="degradat-text">en ordre</span>, de moment`}</h1>
       <p class="destacat">Les pastilles que es gasten soles, el cabell, la gasolina, les revisions. El Tracker compta els dies i t'avisa abans que se t'acabin o quan et toqui.</p>
-      ${dades.exemple ? `<p class="petit">Són dades d'exemple per provar-ho. Les pots esborrar a baix de tot.</p>` : ""}
+      ${dades.exemple ? `<p class="petit">Són dades d'exemple per provar-ho. Pots esborrar cada seguiment des de la seva fitxa.</p>` : ""}
       <div class="accions"><a class="boto gran" href="#nou">Nou seguiment <span class="fletxa" aria-hidden="true">→</span></a></div>
       ${llista.length ? `<div class="xifres"><div class="xifra-r toca"><b>${g.toca.length}</b>toquen ara</div><div class="xifra-r"><b>${g.aviat.length}</b>aviat</div><div class="xifra-r"><b>${g.be.length}</b>en ordre</div></div>` : ""}
     </section>
     ${avisos.length ? `<div class="avisos"><div class="eti">Avisos d'avui · al mòbil, notificació a les 9 h</div>${avisos.map(t => `<div class="avis"><div>${t}</div></div>`).join("")}</div>` : ""}
     ${llista.length ? "" : `<div class="buit" style="margin-top:24px"><span class="ma">Res a vigilar, de moment.</span><p class="petit">Afegeix les pastilles, el cabell, la gasolina…</p><a class="boto" href="#nou" style="margin-top:10px">Nou seguiment</a></div>`}
-    ${grup("Toca ara", g.toca)}${grup("Aviat", g.aviat)}${grup("Tot en ordre", g.be)}
-    <section class="seccio"><div class="gestio"><span class="eti">Les teves dades</span>
-      <div class="botons"><button class="boto secundari" data-acc="exemple">Torna a l'exemple</button><button class="boto secundari perill" data-acc="buida">Esborra-ho tot</button></div>
-    </div></section>`;
+    ${grup("Toca ara", g.toca)}${grup("Aviat", g.aviat)}${grup("Tot en ordre", g.be)}`;
 }
 
 // ---------- Plantilles i formulari ----------
@@ -734,8 +727,6 @@ document.addEventListener("click", ev => {
     case "altre": return obreDialeg("Quin dia va ser?", `<label class="camp" for="f-dd">Dia<input type="date" id="f-dd" max="${dataDe(avui()).toISOString().slice(0, 10)}" value="${dataDe(avui() - 1).toISOString().slice(0, 10)}"></label>`, () => {
       const v = document.getElementById("f-dd").value; if (!v) return; dialeg = null; registra(s, Math.floor(Date.parse(v) / 86400000)) });
     case "tanca": dialeg = null; return pinta();
-    case "buida": return obreDialeg("Esborrar-ho tot?", "<p>S'esborraran tots els seguiments d'aquest navegador.</p>", () => { dades = { exemple: false, nextId: 1, seguiments: [], registres: [] }; desa(); ves("inici") }, "Esborra", true);
-    case "exemple": dades = exemple(); desa(); return ves("inici");
   }
 });
 document.addEventListener("keydown", ev => { if (ev.key === "Escape" && dialeg) { dialeg = null; pinta() } });
