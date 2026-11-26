@@ -233,9 +233,9 @@ label.camp input:focus { outline: 2px solid var(--fort); outline-offset: 0; bord
 .error { color: var(--error); font-weight: 600 }
 .peu-form { display: flex; gap: 10px; flex-wrap: wrap }
 
-/* Simulador (només al prototip) */
-.simulador { border: 1px dashed var(--fort-f); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--fons) }
-.simulador .botons { display: flex; flex-wrap: wrap; gap: 8px }
+/* Gestió de les dades */
+.gestio { border: 1px dashed var(--fort-f); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--fons) }
+.gestio .botons { display: flex; flex-wrap: wrap; gap: 8px }
 
 /* Diàlegs centrats */
 .vel { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: rgba(0, 0, 0, .42);
@@ -280,7 +280,7 @@ footer { border-top: 1px solid var(--linia); padding: 24px 0; color: var(--suau)
   </div>
 </header>
 <main id="app"></main>
-<footer>Tracker · prototip web. Les dades es guarden només en aquest navegador.</footer>
+<footer>Tracker. Les dades es guarden només en aquest navegador.</footer>
 <div id="capa-dialeg"></div>
 
 <script>
@@ -372,13 +372,14 @@ function exemple() {
     { ...base, id: id++, nom: "Lentilles", detall: "Mensuals", plantilla: "CONSUMIBLE", ambEstoc: true, nomUnitat: "parell", nomPaquet: "caixa", unitatsPerPaquet: 3, consumCadaDies: 30, estocUnitats: 2, estocData: a, consumInici: a - 5, avisEstocDies: 20 },
   ];
   const r = (s, d, valor = null) => ({ id: Math.random().toString(36).slice(2), seguimentId: s, data: a - d, valor, nota: "" });
-  return { exemple: true, desplacament: 0, nextId: id, seguiments: seg,
+  return { exemple: true, nextId: id, seguiments: seg,
     registres: [r(2, 92), r(2, 61), r(2, 29), r(3, 26, 18.5), r(3, 17, 21), r(3, 9, 19.8), r(4, 340)] };
 }
 function carrega() { try { const t = localStorage.getItem(CLAU); if (t) return JSON.parse(t) } catch (e) {} return exemple() }
 function desa() { try { localStorage.setItem(CLAU, JSON.stringify(dades)) } catch (e) {} }
 dades = carrega();
-const avui = () => avuiReal() + (dades.desplacament || 0);
+delete dades.desplacament;
+const avui = avuiReal;
 
 // ---------- Plantilles ----------
 const PLANTILLES = [
@@ -546,7 +547,7 @@ function inici() {
   const grup = (t, l) => l.length ? `<section class="seccio"><div class="seccio-cap"><h2>${t}</h2><span class="compte">${l.length}</span></div><div class="graella">${l.map(targetaSeg).join("")}</div></section>` : "";
   const avisos = avisosDAvui(llista);
   return `<section class="portada">
-      <span class="eti">${dataLlarga(a)}${dades.desplacament ? " · simulat" : ""}</span>
+      <span class="eti">${dataLlarga(a)}</span>
       <h1>${g.toca.length ? `Tens <span class="degradat-text">${g.toca.length === 1 ? "una cosa" : `${g.toca.length} coses`}</span> que toquen ara` : `Tot <span class="degradat-text">en ordre</span>, de moment`}</h1>
       <p class="destacat">Les pastilles que es gasten soles, el cabell, la gasolina, les revisions. El Tracker compta els dies i t'avisa abans que se t'acabin o quan et toqui.</p>
       ${dades.exemple ? `<p class="petit">Són dades d'exemple per provar-ho. Les pots esborrar a baix de tot.</p>` : ""}
@@ -556,10 +557,8 @@ function inici() {
     ${avisos.length ? `<div class="avisos"><div class="eti">Avisos d'avui · al mòbil, notificació a les 9 h</div>${avisos.map(t => `<div class="avis"><div>${t}</div></div>`).join("")}</div>` : ""}
     ${llista.length ? "" : `<div class="buit" style="margin-top:24px"><span class="ma">Res a vigilar, de moment.</span><p class="petit">Afegeix les pastilles, el cabell, la gasolina…</p><a class="boto" href="#nou" style="margin-top:10px">Nou seguiment</a></div>`}
     ${grup("Toca ara", g.toca)}${grup("Aviat", g.aviat)}${grup("Tot en ordre", g.be)}
-    <section class="seccio"><div class="simulador"><span class="eti">Només al prototip: passa el temps</span>
-      <p class="petit">Avança dies per veure com es gasten les pastilles i com arriben els avisos.${dades.desplacament ? ` Ara mateix vas ${diesT(dades.desplacament)} per davant.` : ""}</p>
-      <div class="botons"><button class="boto secundari" data-acc="dia">+1 dia</button><button class="boto secundari" data-acc="setmana">+7 dies</button>${dades.desplacament ? `<button class="boto secundari" data-acc="real">Torna a avui</button>` : ""}
-      <button class="boto secundari" data-acc="exemple">Torna a l'exemple</button><button class="boto secundari perill" data-acc="buida">Esborra-ho tot</button></div>
+    <section class="seccio"><div class="gestio"><span class="eti">Les teves dades</span>
+      <div class="botons"><button class="boto secundari" data-acc="exemple">Torna a l'exemple</button><button class="boto secundari perill" data-acc="buida">Esborra-ho tot</button></div>
     </div></section>`;
 }
 
@@ -735,10 +734,7 @@ document.addEventListener("click", ev => {
     case "altre": return obreDialeg("Quin dia va ser?", `<label class="camp" for="f-dd">Dia<input type="date" id="f-dd" max="${dataDe(avui()).toISOString().slice(0, 10)}" value="${dataDe(avui() - 1).toISOString().slice(0, 10)}"></label>`, () => {
       const v = document.getElementById("f-dd").value; if (!v) return; dialeg = null; registra(s, Math.floor(Date.parse(v) / 86400000)) });
     case "tanca": dialeg = null; return pinta();
-    case "dia": dades.desplacament = (dades.desplacament || 0) + 1; desa(); return pinta();
-    case "setmana": dades.desplacament = (dades.desplacament || 0) + 7; desa(); return pinta();
-    case "real": dades.desplacament = 0; desa(); return pinta();
-    case "buida": return obreDialeg("Esborrar-ho tot?", "<p>S'esborraran tots els seguiments d'aquest navegador.</p>", () => { dades = { exemple: false, desplacament: 0, nextId: 1, seguiments: [], registres: [] }; desa(); ves("inici") }, "Esborra", true);
+    case "buida": return obreDialeg("Esborrar-ho tot?", "<p>S'esborraran tots els seguiments d'aquest navegador.</p>", () => { dades = { exemple: false, nextId: 1, seguiments: [], registres: [] }; desa(); ves("inici") }, "Esborra", true);
     case "exemple": dades = exemple(); desa(); return ves("inici");
   }
 });
